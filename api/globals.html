@@ -68,16 +68,16 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-class"><a href="classes/keymapmanager.html" class="tsd-kind-icon">Keymap<wbr>Manager</a></li>
+								<li class="tsd-kind-class tsd-is-external"><a href="classes/keymapmanager.html" class="tsd-kind-icon">Keymap<wbr>Manager</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-external">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface"><a href="interfaces/ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a></li>
+								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
@@ -171,13 +171,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keycodes.ts#L76">keycodes.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keycodes.ts#L78">keycodes.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Normalize and validate a keystroke.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>An error if the keystroke has an invalid format.</p>
+										<h4 id="notes">Notes</h4>
+										<p>The keystroke must adhere to the following format:</p>
+										<p>  <code>[&lt;modifier-1&gt;+[&lt;modifier-2&gt;+[&lt;modifier-n&gt;+]]]&lt;key&gt;</code></p>
+										<ul>
+											<li>Supported modifiers are <code>&#39;ctrl&#39;</code>, <code>&#39;alt&#39;</code>, <code>&#39;shift&#39;</code>, <code>&#39;cmd&#39;</code>.</li>
+											<li>The <code>&#39;cmd&#39;</code> modifier only works on OSX (browser limitation).</li>
+											<li>The modifiers may appear in any order.</li>
+											<li>The modifiers cannot appear in duplicate.</li>
+											<li>The primary key must be a valid key character.</li>
+											<li>The keystroke is case insensitive.</li>
+										</ul>
+										<p>If the key does not adhere to the format, an error will be thrown.</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -190,18 +207,6 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 							<p>The lower cased and canonically ordered keystroke.</p>
-							<h4 id="notes">Notes</h4>
-							<p>The keystroke must adhere to the following format:</p>
-							<p>  <code>[&lt;modifier-1&gt;+[&lt;modifier-2&gt;+[&lt;modifier-n&gt;+]]]&lt;key&gt;</code></p>
-							<ul>
-								<li>Supported modifiers are <code>&#39;ctrl&#39;</code>, <code>&#39;alt&#39;</code>, <code>&#39;shift&#39;</code>, <code>&#39;cmd&#39;</code>.</li>
-								<li>The <code>&#39;cmd&#39;</code> modifier only works on OSX (browser limitation).</li>
-								<li>The modifiers may appear in any order.</li>
-								<li>The modifiers cannot appear in duplicate.</li>
-								<li>The primary key must be a valid key character.</li>
-								<li>The keystroke is case insensitive.</li>
-							</ul>
-							<p>If the key does not adhere to the format, an error will be thrown.</p>
 						</li>
 					</ul>
 				</section>
@@ -217,10 +222,10 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class">
+					<li class=" tsd-kind-class tsd-is-external">
 						<a href="classes/keymapmanager.html" class="tsd-kind-icon">Keymap<wbr>Manager</a>
 					</li>
-					<li class=" tsd-kind-interface">
+					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
