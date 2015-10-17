@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IKeyBinding | phosphor-keymap</title>
+	<title>IKeyboardLayout | phosphor-keymap</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,10 +57,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="ikeybinding.html">IKeyBinding</a>
+					<a href="ikeyboardlayout.html">IKeyboardLayout</a>
 				</li>
 			</ul>
-			<h1>Interface IKeyBinding</h1>
+			<h1>Interface IKeyboardLayout</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An object which represents a key binding.</p>
+						<p>An object which represents an abstract keyboard layout.</p>
 					</div>
 				</div>
 			</section>
@@ -78,8 +78,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IKeyBinding</span>
+						<span class="target">IKeyboardLayout</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/keycodelayout.html" class="tsd-signature-type">KeycodeLayout</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -89,9 +95,15 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="ikeybinding.html#handler" class="tsd-kind-icon">handler</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="ikeybinding.html#selector" class="tsd-kind-icon">selector</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="ikeybinding.html#sequence" class="tsd-kind-icon">sequence</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="ikeyboardlayout.html#name" class="tsd-kind-icon">name</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="ikeyboardlayout.html#isvalidkeycap" class="tsd-kind-icon">is<wbr>Valid<wbr>Keycap</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="ikeyboardlayout.html#keycapforkeydownevent" class="tsd-kind-icon">keycap<wbr>For<wbr>Keydown<wbr>Event</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-external"><a href="ikeyboardlayout.html#keycaps" class="tsd-kind-icon">keycaps</a></li>
 							</ul>
 						</section>
 					</div>
@@ -100,88 +112,114 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="handler" class="tsd-anchor"></a>
-					<h3>handler</h3>
-					<div class="tsd-signature tsd-kind-icon">handler<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L72">manager.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keyboard.ts#L21">keyboard.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The handler function to invoke when the key binding is matched.</p>
+							<p>The human readable read-only name of the layout.</p>
 						</div>
-					</div>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-siganture">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-									</li>
-								</ul>
-							</li>
-						</ul>
+						<p>This value is used primarily for display and debugging purposes.</p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="selector" class="tsd-anchor"></a>
-					<h3>selector</h3>
-					<div class="tsd-signature tsd-kind-icon">selector<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L67">manager.ts:67</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The CSS selector for the key binding.</p>
-						</div>
-						<p>The selector must match a node on the propagation path of the
-						keyboard event in order for the binding handler to be invoked.</p>
-						<p>If the selector is invalid, the key binding will be ignored.</p>
-					</div>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="isvalidkeycap" class="tsd-anchor"></a>
+					<h3>is<wbr>Valid<wbr>Keycap</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Valid<wbr>Keycap<span class="tsd-signature-symbol">(</span>keycap<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keyboard.ts#L41">keyboard.ts:41</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Test whether the given keycap is a valid value for the layout.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>keycap: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The user provided keycap to test for validity.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+							<p><code>true</code> if the keycap is valid, <code>false</code> otherwise.</p>
+						</li>
+					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="sequence" class="tsd-anchor"></a>
-					<h3>sequence</h3>
-					<div class="tsd-signature tsd-kind-icon">sequence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L57">manager.ts:57</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The key sequence for the key binding.</p>
-						</div>
-						<p>A key sequence is represented as an array of keystrokes, where
-							each keystroke is a combination of modifiers (optional) and a
-						primary key (required).</p>
-						<p>Most key sequences will be an array of length <code>1</code>, which represent
-							a typical keyboard shortcut. Sequences of longer length are known
-						as &quot;chords&quot; and can be useful for modal input (ala Vim).</p>
-						<p>Each keystroke in the sequence must adhere to the format:</p>
-						<p>  <code>[&lt;modifier 1&gt; [&lt;modifier 2&gt; [&lt;modifier N]]] &lt;primary key&gt;</code></p>
-						<p>The supported modifiers are: <code>Accel</code>, <code>Alt</code>, <code>Cmd</code>, <code>Ctrl</code>, and
-							<code>Shift</code>. The <code>Accel</code> modifier is translated to <code>Cmd</code> on Mac and
-						<code>Ctrl</code> on all other platforms.</p>
-						<p>Each keystroke must conform to the following:</p>
-						<ul>
-							<li>Modifiers and the primary key are case senstive.</li>
-							<li>The primary key must be a valid key for the layout.</li>
-							<li>Whitespace is used to separate modifiers and primary key.</li>
-							<li>Modifiers may appear in any order before the primary key.</li>
-							<li>Modifiers cannot appear in duplicate.</li>
-							<li>The <code>Cmd</code> modifier is only valid on Mac.</li>
-						</ul>
-						<p>If a keystroke is nonconforming, the key binding will be ignored.</p>
-					</div>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="keycapforkeydownevent" class="tsd-anchor"></a>
+					<h3>keycap<wbr>For<wbr>Keydown<wbr>Event</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">keycap<wbr>For<wbr>Keydown<wbr>Event<span class="tsd-signature-symbol">(</span>event<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keyboard.ts#L51">keyboard.ts:51</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the keycap for a <code>&#39;keydown&#39;</code> event.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>event: <span class="tsd-signature-type">KeyboardEvent</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The event object for a <code>&#39;keydown&#39;</code> event.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<p>The associated keycap value, or an empty string if
+							the event does not represent a valid primary shortcut key.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+					<a name="keycaps" class="tsd-anchor"></a>
+					<h3>keycaps</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">keycaps<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/keyboard.ts#L32">keyboard.ts:32</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get an array of all keycap values supported by the layout.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
+							<p>A new array of the supported keycap values.</p>
+							<h4 id="notes">Notes</h4>
+							<p>This can be useful for authoring tools and debugging, when it&#39;s
+							necessary to know which keys are available for shortcut use.</p>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -201,27 +239,30 @@
 					<li class=" tsd-kind-class tsd-is-external">
 						<a href="../classes/keymapmanager.html" class="tsd-kind-icon">Keymap<wbr>Manager</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a>
+						<a href="ikeyboardlayout.html" class="tsd-kind-icon">IKeyboard<wbr>Layout</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="ikeybinding.html#handler" class="tsd-kind-icon">handler</a>
+								<a href="ikeyboardlayout.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="ikeybinding.html#selector" class="tsd-kind-icon">selector</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="ikeyboardlayout.html#isvalidkeycap" class="tsd-kind-icon">is<wbr>Valid<wbr>Keycap</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="ikeybinding.html#sequence" class="tsd-kind-icon">sequence</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="ikeyboardlayout.html#keycapforkeydownevent" class="tsd-kind-icon">keycap<wbr>For<wbr>Keydown<wbr>Event</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-external">
+								<a href="ikeyboardlayout.html#keycaps" class="tsd-kind-icon">keycaps</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="ikeyboardlayout.html" class="tsd-kind-icon">IKeyboard<wbr>Layout</a>
-					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="../globals.html#codemap" class="tsd-kind-icon">Code<wbr>Map</a>
 					</li>

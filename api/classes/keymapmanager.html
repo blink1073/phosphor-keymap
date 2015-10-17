@@ -86,14 +86,26 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-external"><a href="keymapmanager.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
 						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_bindings" class="tsd-kind-icon">_bindings</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_exactdata" class="tsd-kind-icon">_exact<wbr>Data</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_keystrokes" class="tsd-kind-icon">_keystrokes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_partialtimeout" class="tsd-kind-icon">_partial<wbr>Timeout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_layout" class="tsd-kind-icon">_layout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_sequence" class="tsd-kind-icon">_sequence</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_timer" class="tsd-kind-icon">_timer</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-external"><a href="keymapmanager.html#layout" class="tsd-kind-icon">layout</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-external">
@@ -103,14 +115,49 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_cleartimer" class="tsd-kind-icon">_clear<wbr>Timer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_onpendingtimeout" class="tsd-kind-icon">_on<wbr>Pending<wbr>Timeout</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_removebindings" class="tsd-kind-icon">_remove<wbr>Bindings</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_setexactdata" class="tsd-kind-icon">_set<wbr>Exact<wbr>Data</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external"><a href="keymapmanager.html#_starttimer" class="tsd-kind-icon">_start<wbr>Timer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="keymapmanager.html#add" class="tsd-kind-icon">add</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="keymapmanager.html#contstructor" class="tsd-kind-icon">contstructor</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-external"><a href="keymapmanager.html#processkeydownevent" class="tsd-kind-icon">process<wbr>Keydown<wbr>Event</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-external">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Keymap<wbr>Manager<span class="tsd-signature-symbol">(</span>layout<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ikeyboardlayout.html" class="tsd-signature-type">IKeyboardLayout</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="keymapmanager.html" class="tsd-signature-type">KeymapManager</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L80">manager.ts:80</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Construct a new key map manager.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> layout: <a href="../interfaces/ikeyboardlayout.html" class="tsd-signature-type">IKeyboardLayout</a><span class="tsd-signature-symbol"> =&nbsp;EN_US</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The keyboard layout to use with the manager.
+											The default layout is US English.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="keymapmanager.html" class="tsd-signature-type">KeymapManager</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-external">
@@ -118,10 +165,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 					<a name="_bindings" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _bindings</h3>
-					<div class="tsd-signature tsd-kind-icon">_bindings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ExBinding</span><span class="tsd-signature-symbol">[]</span></div>
+					<div class="tsd-signature tsd-kind-icon">_bindings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IExBinding</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L273">manager.ts:273</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L238">manager.ts:238</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -131,27 +178,27 @@
 					<div class="tsd-signature tsd-kind-icon">_exact<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IExactData</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L274">manager.ts:274</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L239">manager.ts:239</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_keystrokes" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _keystrokes</h3>
-					<div class="tsd-signature tsd-kind-icon">_keystrokes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="_layout" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _layout</h3>
+					<div class="tsd-signature tsd-kind-icon">_layout<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ikeyboardlayout.html" class="tsd-signature-type">IKeyboardLayout</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L272">manager.ts:272</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L236">manager.ts:236</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_partialtimeout" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _partial<wbr>Timeout</h3>
-					<div class="tsd-signature tsd-kind-icon">_partial<wbr>Timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="_sequence" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _sequence</h3>
+					<div class="tsd-signature tsd-kind-icon">_sequence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L271">manager.ts:271</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L237">manager.ts:237</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -161,9 +208,36 @@
 					<div class="tsd-signature tsd-kind-icon">_timer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L270">manager.ts:270</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L235">manager.ts:235</a></li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+					<a name="layout" class="tsd-anchor"></a>
+					<h3>layout</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> layout<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/ikeyboardlayout.html" class="tsd-signature-type">IKeyboardLayout</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L97">manager.ts:97</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the keyboard layout used by the manager.</p>
+								</div>
+								<h4 id="notes">Notes</h4>
+								<p>This is a read-only property.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/ikeyboardlayout.html" class="tsd-signature-type">IKeyboardLayout</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
@@ -178,7 +252,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L240">manager.ts:240</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L218">manager.ts:218</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -200,7 +274,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L230">manager.ts:230</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L208">manager.ts:208</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -222,14 +296,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L263">manager.ts:263</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L227">manager.ts:227</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Handle the partial timer timeout.</p>
+									<p>Handle the partial match timeout.</p>
 								</div>
-								<p>This will reset the pending state and dispatch the exact matches.</p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
@@ -239,55 +312,24 @@
 					<a name="_removebindings" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _remove<wbr>Bindings</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">_remove<wbr>Bindings<span class="tsd-signature-symbol">(</span>arr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExBinding</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">_remove<wbr>Bindings<span class="tsd-signature-symbol">(</span>array<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IExBinding</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L213">manager.ts:213</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L191">manager.ts:191</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Remove an array of ex key bindings from the key map.</p>
+									<p>Remove an array of extended bindings from the key map.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>arr: <span class="tsd-signature-type">ExBinding</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-					<a name="_setexactdata" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _set<wbr>Exact<wbr>Data</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">_set<wbr>Exact<wbr>Data<span class="tsd-signature-symbol">(</span>exact<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ExBinding</span><span class="tsd-signature-symbol">[]</span>, event<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">KeyboardEvent</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L249">manager.ts:249</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Set the pending exact match data.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>exact: <span class="tsd-signature-type">ExBinding</span><span class="tsd-signature-symbol">[]</span></h5>
-								</li>
-								<li>
-									<h5>event: <span class="tsd-signature-type">KeyboardEvent</span></h5>
+									<h5>array: <span class="tsd-signature-type">IExBinding</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -304,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L220">manager.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L198">manager.ts:198</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,65 +362,40 @@
 					<a name="add" class="tsd-anchor"></a>
 					<h3>add</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>selector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bindings<span class="tsd-signature-symbol">: </span><a href="../interfaces/ikeybinding.html" class="tsd-signature-type">IKeyBinding</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IDisposable</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>bindings<span class="tsd-signature-symbol">: </span><a href="../interfaces/ikeybinding.html" class="tsd-signature-type">IKeyBinding</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IDisposable</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L107">manager.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L120">manager.ts:120</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add key bindings to the key map.</p>
+									<p>Add key bindings to the key map manager.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>selector: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The CSS selector for the key bindings.</p>
-									</div>
-								</li>
-								<li>
 									<h5>bindings: <a href="../interfaces/ikeybinding.html" class="tsd-signature-type">IKeyBinding</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The key bindings to add to the key map.</p>
+										<p>The key bindings to add to the manager.</p>
 									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IDisposable</span></h4>
-							<p>A disposable which will remove the key bindings.</p>
+							<p>A disposable which removes the added key bindings.</p>
 							<h4 id="notes">Notes</h4>
-							<p>If the selector is an invalid CSS selector, a warning will
-							be logged to the console and <code>undefined</code> will be returned.</p>
-							<p>If the key sequence for a binding is invalid, or if a binding
-								has a null handler, a warning will be logged to the console
-							and that binding will be ignored.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-external">
-					<a name="contstructor" class="tsd-anchor"></a>
-					<h3>contstructor</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-external">
-						<li class="tsd-signature tsd-kind-icon">contstructor<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L88">manager.ts:88</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Construct a new key map.</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<p>If a key binding is invalid, a warning will be logged to the
+							console and the offending key binding will be ignored.</p>
+							<p>If multiple key bindings are registered for the same sequence,
+								the binding with the highest CSS specificity is executed first.
+								Ties in specificity are broken based on the order in which the
+								key bindings are added to the manager, with newer bindinding
+							taking precedence.</p>
+							<p>Ambiguous key bindings are resolved with a timeout.</p>
 						</li>
 					</ul>
 				</section>
@@ -392,12 +409,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L160">manager.ts:160</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-keymap/blob/HEAD/src/manager.ts#L141">manager.ts:141</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Process a <code>&#39;keydown&#39;</code> event and invoke the matching key bindings.</p>
+									<p>Process a <code>&#39;keydown&#39;</code> event and invoke a matching key binding.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -407,10 +424,11 @@
 									<div class="tsd-comment tsd-typography">
 										<p>The event object for a <code>&#39;keydown&#39;</code> event.</p>
 										<h4 id="notes">Notes</h4>
-										<p>This should be called by user code in response to a <code>&#39;keydown&#39;</code>
-											event. The keymap <strong>does not</strong> install its own event listeners,
-											which allows user code full control over the nodes for which
-										the keymap processes events.</p>
+										<p>This should be called in response to a <code>&#39;keydown&#39;</code> event in order
+										to invoke the handler function of the best matching key binding.</p>
+										<p>The manager <strong>does not</strong> install its own key event listeners. This
+											allows user code full control over the nodes for which the manager
+										processes <code>&#39;keydown&#39;</code> events.</p>
 									</div>
 								</li>
 							</ul>
@@ -430,11 +448,17 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-is-external">
+						<a href="keycodelayout.html" class="tsd-kind-icon">Keycode<wbr>Layout</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-is-external">
 						<a href="keymapmanager.html" class="tsd-kind-icon">Keymap<wbr>Manager</a>
 						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-external">
+								<a href="keymapmanager.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="keymapmanager.html#_bindings" class="tsd-kind-icon">_bindings</a>
 							</li>
@@ -442,13 +466,16 @@
 								<a href="keymapmanager.html#_exactdata" class="tsd-kind-icon">_exact<wbr>Data</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="keymapmanager.html#_keystrokes" class="tsd-kind-icon">_keystrokes</a>
+								<a href="keymapmanager.html#_layout" class="tsd-kind-icon">_layout</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="keymapmanager.html#_partialtimeout" class="tsd-kind-icon">_partial<wbr>Timeout</a>
+								<a href="keymapmanager.html#_sequence" class="tsd-kind-icon">_sequence</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="keymapmanager.html#_timer" class="tsd-kind-icon">_timer</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-external">
+								<a href="keymapmanager.html#layout" class="tsd-kind-icon">layout</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="keymapmanager.html#_clearpendingstate" class="tsd-kind-icon">_clear<wbr>Pending<wbr>State</a>
@@ -463,16 +490,10 @@
 								<a href="keymapmanager.html#_removebindings" class="tsd-kind-icon">_remove<wbr>Bindings</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
-								<a href="keymapmanager.html#_setexactdata" class="tsd-kind-icon">_set<wbr>Exact<wbr>Data</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private tsd-is-external">
 								<a href="keymapmanager.html#_starttimer" class="tsd-kind-icon">_start<wbr>Timer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="keymapmanager.html#add" class="tsd-kind-icon">add</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
-								<a href="keymapmanager.html#contstructor" class="tsd-kind-icon">contstructor</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-external">
 								<a href="keymapmanager.html#processkeydownevent" class="tsd-kind-icon">process<wbr>Keydown<wbr>Event</a>
@@ -484,8 +505,14 @@
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="../interfaces/ikeybinding.html" class="tsd-kind-icon">IKey<wbr>Binding</a>
 					</li>
-					<li class=" tsd-kind-function tsd-is-external">
-						<a href="../globals.html#ismodifierkeycode" class="tsd-kind-icon">is<wbr>Modifier<wbr>Key<wbr>Code</a>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="../interfaces/ikeyboardlayout.html" class="tsd-kind-icon">IKeyboard<wbr>Layout</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-external">
+						<a href="../globals.html#codemap" class="tsd-kind-icon">Code<wbr>Map</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-external">
+						<a href="../globals.html#en_us" class="tsd-kind-icon">EN_<wbr>US</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="../globals.html#keystrokeforkeydownevent" class="tsd-kind-icon">keystroke<wbr>For<wbr>Keydown<wbr>Event</a>
