@@ -12,6 +12,10 @@ import {
 } from 'clear-cut';
 
 import {
+  Command, safeExecute
+} from 'phosphor-command';
+
+import {
   DisposableDelegate, IDisposable
 } from 'phosphor-disposable';
 
@@ -60,19 +64,23 @@ interface IKeyBinding {
    * The CSS selector for the key binding.
    *
    * The selector must match a node on the propagation path of the
-   * keyboard event in order for the binding handler to be invoked.
+   * keyboard event in order for the binding command to be invoked.
    *
    * If the selector is invalid, the key binding will be ignored.
    */
   selector: string;
 
   /**
-   * The handler function to invoke when the key binding is matched.
+   * The command to execute when the key binding is matched.
    *
-   * If the handler returns `true`, propagation stops. If the handler
-   * returns `false`, the next matching key binding will be invoked.
+   * A command which is not enabled will not be matched.
    */
-  handler: () => boolean;
+  command: Command;
+
+  /**
+   * The arguments for the command, if necessary.
+   */
+  args?: any;
 }
 
 
@@ -114,16 +122,15 @@ class KeymapManager {
    *
    * If multiple key bindings are registered for the same sequence,
    * the binding with the highest CSS specificity is executed first.
-   * Ties in specificity are broken based on the order in which the
-   * key bindings are added to the manager, with newer binding
-   * taking precedence.
    *
    * Ambiguous key bindings are resolved with a timeout.
    */
   add(bindings: IKeyBinding[]): IDisposable {
-    let exbArray = bindings.map(binding => {
-      return createExBinding(binding, this._layout);
-    }).filter(exBinding => !!exBinding);
+    let exbArray: IExBinding[] = [];
+    for (let kb of bindings) {
+      let exb = createExBinding(kb, this._layout);
+      if (exb) exbArray.push(exb);
+    }
     this._bindings = this._bindings.concat(exbArray);
     return new DisposableDelegate(() => this._removeBindings(exbArray));
   }
@@ -300,20 +307,16 @@ function createExBinding(binding: IKeyBinding, layout: IKeyboardLayout): IExBind
     console.warn('empty key sequence for key binding');
     return null;
   }
-  if (!binding.handler) {
-    console.warn('null handler for key binding');
-    return null;
-  }
   try {
     var sequence = binding.sequence.map(ks => normalizeKeystroke(ks, layout));
   } catch (e) {
     console.warn(e.message);
-    console.warn(`invalid key binding sequence: ${binding.sequence}`);
     return null;
   }
   return {
     sequence: sequence,
-    handler: binding.handler,
+    command: binding.command,
+    args: binding.args || null,
     selector: binding.selector,
     specificity: calculateSpecificity(binding.selector),
   };
@@ -391,10 +394,11 @@ function findOrderedMatches(bindings: IExBinding[], target: Element): IExBinding
 function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
   let target = event.target as Element;
   while (target) {
-    for (let exb of findOrderedMatches(bindings, target)) {
-      if (exb.handler.call(void 0)) {
+    for (let { command, args } of findOrderedMatches(bindings, target)) {
+      if (command.isEnabled(args)) {
         event.preventDefault();
         event.stopPropagation();
+        safeExecute(command, args);
         return;
       }
     }
