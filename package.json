@@ -6,8 +6,8 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "clear-cut": "^2.0.1",
-    "phosphor-command": "^0.6.0",
-    "phosphor-disposable": "^1.0.4"
+    "phosphor-command": "^0.7.0",
+    "phosphor-disposable": "^1.0.5"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
