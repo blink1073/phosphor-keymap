@@ -8,7 +8,7 @@
 'use-strict';
 
 import {
-  SimpleCommand
+  Command
 } from 'phosphor-command';
 
 import {
@@ -19,7 +19,7 @@ import {
 /**
  * A list of keyboard shortcuts for the example.
  */
-var SHORTCUTS = [
+const SHORTCUTS = [
   ['A'],
   ['B'],
   ['D'],
@@ -51,14 +51,16 @@ function makeStr(sequence: string[]): string {
 
 
 /**
- * A shortcut handler function which logs the sequence.
- *
- * This handler always returns true to stop event propagation.
+ * A command which logs the key binding sequence.
  */
-function logHandler(sequence: string[]): boolean {
-  var span = document.getElementById('log-span');
-  span.textContent = makeStr(sequence);
-  return true;
+class LogCommand extends Command {
+
+  static instance = new LogCommand();
+
+  execute(args: any): void {
+    let span = document.getElementById('log-span');
+    span.textContent = makeStr(args.sequence as string[]);
+  }
 }
 
 
@@ -69,7 +71,8 @@ function makeLogBinding(sequence: string[]): IKeyBinding {
   return {
     selector: '*',
     sequence: sequence,
-    command: new SimpleCommand({ handler: logHandler.bind(void 0, sequence) })
+    command: LogCommand.instance,
+    args: { sequence },
   };
 }
 
@@ -78,7 +81,7 @@ function makeLogBinding(sequence: string[]): IKeyBinding {
  * Create an unordered list from an array of strings.
  */
 function createList(data: string[][]): HTMLElement {
-  var ul = document.createElement('ul');
+  let ul = document.createElement('ul');
   ul.innerHTML = data.map(seq => `<li>${makeStr(seq)}</li>`).join('');
   return ul;
 }
@@ -89,10 +92,10 @@ function createList(data: string[][]): HTMLElement {
  */
 function main(): void {
   // Create the key bindings for the shortcuts.
-  var bindings = SHORTCUTS.map(makeLogBinding);
+  let bindings = SHORTCUTS.map(makeLogBinding);
 
   // Initialize the keymap manager with the bindings.
-  var keymap = new KeymapManager();
+  let keymap = new KeymapManager();
   keymap.add(bindings);
 
   // Setup the keydown listener for the document.
@@ -101,7 +104,7 @@ function main(): void {
   });
 
   // Create and add the list of shortcuts to the DOM.
-  var host = document.getElementById('list-host');
+  let host = document.getElementById('list-host');
   host.appendChild(createList(SHORTCUTS));
 }
 
