@@ -398,7 +398,7 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
       if (command.isEnabled(args)) {
         event.preventDefault();
         event.stopPropagation();
-        if (command.isEnabled) command.execute(args);
+        command.execute(args);
         return;
       }
     }
