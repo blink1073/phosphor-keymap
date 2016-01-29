@@ -12,7 +12,7 @@ import {
 } from 'clear-cut';
 
 import {
-  Command, safeExecute
+  Command
 } from 'phosphor-command';
 
 import {
@@ -398,7 +398,7 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
       if (command.isEnabled(args)) {
         event.preventDefault();
         event.stopPropagation();
-        safeExecute(command, args);
+        command.execute(args);
         return;
       }
     }
