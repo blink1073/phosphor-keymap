@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "name": "phosphor-keymap-example",
+  "dependencies": {
+    "phosphor-keymap": "file:.."
+  },
+  "scripts": {
+    "postinstall": "npm dedupe"
+  }
+}

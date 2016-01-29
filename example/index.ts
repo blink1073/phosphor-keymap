@@ -8,8 +8,12 @@
 'use-strict';
 
 import {
+  SimpleCommand
+} from 'phosphor-command';
+
+import {
   IKeyBinding, KeymapManager, keystrokeForKeydownEvent
-} from '../lib/index';
+} from 'phosphor-keymap';
 
 
 /**
@@ -65,7 +69,7 @@ function makeLogBinding(sequence: string[]): IKeyBinding {
   return {
     selector: '*',
     sequence: sequence,
-    handler: logHandler.bind(void 0, sequence),
+    command: new SimpleCommand({ handler: logHandler.bind(void 0, sequence) })
   };
 }
 
