@@ -5,14 +5,10 @@
 |
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
-'use-strict';
+'use strict';
 
 import {
-  Command
-} from 'phosphor-command';
-
-import {
-  IKeyBinding, KeymapManager, keystrokeForKeydownEvent
+  IKeyBinding, KeymapManager
 } from 'phosphor-keymap';
 
 
@@ -53,15 +49,15 @@ function makeStr(sequence: string[]): string {
 /**
  * A command which logs the key binding sequence.
  */
-class LogCommand extends Command {
-
-  static instance = new LogCommand();
-
-  execute(args: any): void {
+const logCommand = {
+  execute: (args: any) => {
     let span = document.getElementById('log-span');
     span.textContent = makeStr(args.sequence as string[]);
-  }
-}
+  },
+  isEnabled: (args: any) => {
+    return true;
+  },
+};
 
 
 /**
@@ -71,7 +67,7 @@ function makeLogBinding(sequence: string[]): IKeyBinding {
   return {
     selector: '*',
     sequence: sequence,
-    command: LogCommand.instance,
+    command: logCommand,
     args: { sequence },
   };
 }

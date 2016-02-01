@@ -12,7 +12,7 @@ import {
 } from 'clear-cut';
 
 import {
-  Command
+  ICommand
 } from 'phosphor-command';
 
 import {
@@ -75,7 +75,7 @@ interface IKeyBinding {
    *
    * A command which is not enabled will not be matched.
    */
-  command: Command;
+  command: ICommand;
 
   /**
    * The arguments for the command, if necessary.
@@ -398,7 +398,7 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
       if (command.isEnabled(args)) {
         event.preventDefault();
         event.stopPropagation();
-        command.execute(args);
+        safeExecute(command, args);
         return;
       }
     }
@@ -406,6 +406,18 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
       return;
     }
     target = target.parentElement;
+  }
+}
+
+
+/**
+ * Safely execute a command and catch and log any exception.
+ */
+function safeExecute(command: ICommand, args: any): void {
+  try {
+    command.execute(args);
+  } catch (err) {
+    console.error(err);
   }
 }
 

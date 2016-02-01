@@ -6,7 +6,7 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "clear-cut": "^2.0.1",
-    "phosphor-command": "^0.8.0",
+    "phosphor-command": "^0.9.0",
     "phosphor-disposable": "^1.0.5"
   },
   "devDependencies": {
@@ -51,12 +51,8 @@
     "url": "https://github.com/phosphorjs/phosphor-keymap.git"
   },
   "files": [
-    "lib/index.js",
-    "lib/index.d.ts",
-    "lib/keyboard.js",
-    "lib/keyboard.d.ts",
-    "lib/manager.js",
-    "lib/manager.d.ts"
+    "lib/*.d.ts",
+    "lib/*.js"
   ],
   "keywords": [
     "keymap",
