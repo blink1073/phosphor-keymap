@@ -11,6 +11,7 @@
   "files": [
     "../typings/clear-cut/clear-cut.d.ts",
     "index.ts",
-    "keyboard.ts"
+    "keyboard.ts",
+    "manager.ts"
   ]
 }
