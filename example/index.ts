@@ -47,17 +47,13 @@ function makeStr(sequence: string[]): string {
 
 
 /**
- * A command which logs the key binding sequence.
+ * A handler which logs the key binding sequence.
  */
-const logCommand = {
-  execute: (args: any) => {
-    let span = document.getElementById('log-span');
-    span.textContent = makeStr(args.sequence as string[]);
-  },
-  isEnabled: (args: any) => {
-    return true;
-  },
-};
+function logHandler(args: any): boolean {
+  let span = document.getElementById('log-span');
+  span.textContent = makeStr(args.sequence as string[]);
+  return true;
+}
 
 
 /**
@@ -67,7 +63,7 @@ function makeLogBinding(sequence: string[]): IKeyBinding {
   return {
     selector: '*',
     sequence: sequence,
-    command: logCommand,
+    handler: logHandler,
     args: { sequence },
   };
 }
