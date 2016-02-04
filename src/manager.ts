@@ -71,14 +71,14 @@ interface IKeyBinding {
   selector: string;
 
   /**
-   * The command to execute when the key binding is matched.
+   * The handler to execute when the key binding is matched.
    *
-   * A command which is not enabled will not be matched.
+   * Returns `true` if the action is handled, `false` otherwise.
    */
-  command: ICommand;
+  handler: (args: any) => boolean;
 
   /**
-   * The arguments for the command, if necessary.
+   * The arguments for the handler, if necessary.
    */
   args?: any;
 }
@@ -315,8 +315,8 @@ function createExBinding(binding: IKeyBinding, layout: IKeyboardLayout): IExBind
   }
   return {
     sequence: sequence,
-    command: binding.command,
-    args: binding.args || null,
+    args: binding.args,
+    handler: binding.handler,
     selector: binding.selector,
     specificity: calculateSpecificity(binding.selector),
   };
@@ -394,11 +394,10 @@ function findOrderedMatches(bindings: IExBinding[], target: Element): IExBinding
 function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
   let target = event.target as Element;
   while (target) {
-    for (let { command, args } of findOrderedMatches(bindings, target)) {
-      if (command.isEnabled(args)) {
+    for (let { handler, args } of findOrderedMatches(bindings, target)) {
+      if (handler(args)) {
         event.preventDefault();
         event.stopPropagation();
-        safeExecute(command, args);
         return;
       }
     }
@@ -406,18 +405,6 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
       return;
     }
     target = target.parentElement;
-  }
-}
-
-
-/**
- * Safely execute a command and catch and log any exception.
- */
-function safeExecute(command: ICommand, args: any): void {
-  try {
-    command.execute(args);
-  } catch (err) {
-    console.error(err);
   }
 }
 
