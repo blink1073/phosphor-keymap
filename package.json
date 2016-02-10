@@ -6,7 +6,6 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "clear-cut": "^2.0.1",
-    "phosphor-command": "^0.9.0",
     "phosphor-disposable": "^1.0.5"
   },
   "devDependencies": {
@@ -31,7 +30,7 @@
   "scripts": {
     "clean": "rimraf lib && rimraf test/build && rimraf test/coverage",
     "clean:example": "rimraf example/bundle.js rimraf example/index.js && rimraf example/node_modules/phosphor-keymap",
-    "build:example": "cd example && npm install && tsc && webpack --config ./webpack.conf.js",
+    "build:example": "npm run clean:example && cd example && npm install && tsc && webpack --config ./webpack.conf.js",
     "build:src": "tsc --project src",
     "build:test": "tsc --project test/src && webpack --config test/webpack.conf.js",
     "build": "npm run build:src && npm run build:test",

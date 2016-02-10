@@ -12,10 +12,6 @@ import {
 } from 'clear-cut';
 
 import {
-  ICommand
-} from 'phosphor-command';
-
-import {
   DisposableDelegate, IDisposable
 } from 'phosphor-disposable';
 
