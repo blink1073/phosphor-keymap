@@ -145,6 +145,11 @@ class KeymapManager {
    * processes `'keydown'` events.
    */
   processKeydownEvent(event: KeyboardEvent): void {
+    // Bail if playing back keystrokes.
+    if (this._loopback) {
+      return;
+    }
+
     // Get the canonical keystroke for the event. An empty string
     // indicates a keystroke which cannot be a valid key shortcut.
     let keystroke = keystrokeForKeydownEvent(event, this._layout);
@@ -174,6 +179,10 @@ class KeymapManager {
       return;
     }
 
+    // Store the event target and a cloned event for playback.
+    this._targets.push(event.target as HTMLElement);
+    this._events.push(cloneKeyboardEvent(event));
+
     // If there are both exact matches and partial matches, the exact
     // matches are stored so that they can be dispatched if the timer
     // expires before a more specific match is found.
@@ -185,7 +194,6 @@ class KeymapManager {
     // the event the pending partial match fails to result in a final
     // unambiguous exact match.
     //
-    // TODO - we may want to replay events if an exact match fails.
     event.preventDefault();
     event.stopPropagation();
     this._startTimer();
@@ -225,6 +233,8 @@ class KeymapManager {
     this._clearTimer();
     this._exactData = null;
     this._sequence.length = 0;
+    this._events = [];
+    this._targets = [];
   }
 
   /**
@@ -235,12 +245,25 @@ class KeymapManager {
     this._timer = 0;
     this._exactData = null;
     this._sequence.length = 0;
-    if (data) dispatchBindings(data.exact, data.event);
+    if (data) {
+      dispatchBindings(data.exact, data.event); 
+    } else {
+      this._loopback = true;
+      for (let i = 0; i < this._targets.length; i++) {
+        this._targets[i].dispatchEvent(this._events[i]);
+      }
+      this._loopback = false;
+    }
+    this._targets = [];
+    this._events = [];
   }
 
   private _timer = 0;
   private _layout: IKeyboardLayout;
   private _sequence: string[] = [];
+  private _events: KeyboardEvent[] = [];
+  private _loopback = false;
+  private _targets: HTMLElement[] = [];
   private _bindings: IExBinding[] = [];
   private _exactData: IExactData = null;
 }
@@ -433,4 +456,22 @@ const protoMatchFunc: Function = (() => {
  */
 function matchesSelector(elem: Element, selector: string): boolean {
   return protoMatchFunc.call(elem, selector);
+}
+
+
+/**
+ * Clone a keyboard event.
+ */
+function cloneKeyboardEvent(event: KeyboardEvent) {
+  let evt = document.createEvent('KeyboardEvent');
+  let modifiers: string[] = [];
+  if (evt.ctrlKey) modifiers.push('Control');
+  if (evt.shiftKey) modifiers.push('Shift');
+  if (evt.metaKey) modifiers.push('Meta');
+  if (evt.altKey) modifiers.push('Alt');
+  let modifier = modifiers.join(' ');
+  let e = event;
+  evt.initKeyboardEvent(e.type, e.cancelBubble, e.cancelable, e.view, e.key,
+                        e.location, modifier, e.repeat, e.locale);
+  return evt;
 }
