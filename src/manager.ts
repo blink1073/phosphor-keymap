@@ -461,6 +461,10 @@ function matchesSelector(elem: Element, selector: string): boolean {
 
 /**
  * Clone a keyboard event.
+ *
+ * #### Notes
+ * We have to use a custom event because Chrome nulls out the `keyCode`
+ * field in `KeyboardEvent`s.
  */
 function cloneKeyboardEvent(event: KeyboardEvent) {
   let newEvent = document.createEvent('Events') as KeyboardEvent;
