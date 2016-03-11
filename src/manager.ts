@@ -166,6 +166,9 @@ class KeymapManager {
     // If there are no exact matches and no partial matches, clear
     // all pending state so the next key press starts from default.
     if (matches.exact.length === 0 && matches.partial.length === 0) {
+      if (this._events.length > 0) {
+        this._replayEvents();
+      }
       this._clearPendingState();
       return;
     }
@@ -180,8 +183,7 @@ class KeymapManager {
     }
 
     // Store the event target and a cloned event for playback.
-    this._targets.push(event.target as HTMLElement);
-    this._events.push(cloneKeyboardEvent(event));
+    this._events.push(event);
 
     // If there are both exact matches and partial matches, the exact
     // matches are stored so that they can be dispatched if the timer
@@ -227,6 +229,22 @@ class KeymapManager {
   }
 
   /**
+   * Replay events that were suppressed.
+   */
+  private _replayEvents(): void {
+    let events = this._events;
+    if (events.length > 0) {
+      this._loopback = true;
+      for (let i = 0; i < events.length; i++) {
+        let event = cloneKeyboardEvent(events[i]);
+        events[i].target.dispatchEvent(event);
+      }
+      this._loopback = false;
+    }
+    this._events = [];
+  }
+
+  /**
    * Clear the pending state for the keymap.
    *
    * #### Notes
@@ -236,15 +254,7 @@ class KeymapManager {
     this._clearTimer();
     this._exactData = null;
     this._sequence.length = 0;
-    if (this._targets.length > 0) {
-      this._loopback = true;
-      for (let i = 0; i < this._targets.length; i++) {
-        this._targets[i].dispatchEvent(this._events[i]);
-      }
-      this._loopback = false;
-    }
     this._events = [];
-    this._targets = [];
   }
 
   /**
@@ -255,8 +265,8 @@ class KeymapManager {
     this._timer = 0;
     if (data) {
       dispatchBindings(data.exact, data.event);
-      this._targets = [];
-      this._events = []; 
+    } else {
+      this._replayEvents();
     }
     this._clearPendingState();
   }
@@ -266,7 +276,6 @@ class KeymapManager {
   private _sequence: string[] = [];
   private _events: KeyboardEvent[] = [];
   private _loopback = false;
-  private _targets: HTMLElement[] = [];
   private _bindings: IExBinding[] = [];
   private _exactData: IExactData = null;
 }
