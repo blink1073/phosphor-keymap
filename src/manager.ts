@@ -233,11 +233,13 @@ class KeymapManager {
     this._clearTimer();
     this._exactData = null;
     this._sequence.length = 0;
-    this._loopback = true;
-    for (let i = 0; i < this._targets.length; i++) {
-      this._targets[i].dispatchEvent(this._events[i]);
+    if (this._targets.length > 0) {
+      this._loopback = true;
+      for (let i = 0; i < this._targets.length; i++) {
+        this._targets[i].dispatchEvent(this._events[i]);
+      }
+      this._loopback = false;
     }
-    this._loopback = false;
     this._events = [];
     this._targets = [];
   }
@@ -248,19 +250,12 @@ class KeymapManager {
   private _onPendingTimeout(): void {
     let data = this._exactData;
     this._timer = 0;
-    this._exactData = null;
-    this._sequence.length = 0;
     if (data) {
-      dispatchBindings(data.exact, data.event); 
-    } else {
-      this._loopback = true;
-      for (let i = 0; i < this._targets.length; i++) {
-        this._targets[i].dispatchEvent(this._events[i]);
-      }
-      this._loopback = false;
+      dispatchBindings(data.exact, data.event);
+      this._targets = [];
+      this._events = []; 
     }
-    this._targets = [];
-    this._events = [];
+    this._clearPendingState();
   }
 
   private _timer = 0;
@@ -469,15 +464,15 @@ function matchesSelector(elem: Element, selector: string): boolean {
  */
 function cloneKeyboardEvent(event: KeyboardEvent) {
   let evt = document.createEvent('KeyboardEvent');
-  let modifiers: string[] = [];
-  if (evt.ctrlKey) modifiers.push('Control');
-  if (evt.shiftKey) modifiers.push('Shift');
-  if (evt.metaKey) modifiers.push('Meta');
-  if (evt.altKey) modifiers.push('Alt');
-  let modifier = modifiers.join(' ');
   let e = event;
   if (evt.initKeyboardEvent !== void 0) {
-    evt.initKeyboardEvent(e.type, e.cancelBubble, e.cancelable, e.view, e.key,
+    let modifiers: string[] = [];
+    if (evt.ctrlKey) modifiers.push('Control');
+    if (evt.shiftKey) modifiers.push('Shift');
+    if (evt.metaKey) modifiers.push('Meta');
+    if (evt.altKey) modifiers.push('Alt');
+    let modifier = modifiers.join(' ');
+    evt.initKeyboardEvent(e.type, e.bubbles, e.cancelable, e.view, e.key,
                         e.location, modifier, e.repeat, e.locale);
   } else {
     (evt as any).initKeyEvent(e.type, e.bubbles, e.cancelable, e.view,

@@ -1,9 +1,9 @@
 /*-----------------------------------------------------------------------------
 | Copyright (c) 2014-2015, PhosphorJS Contributors
 |
-| Distributed under the terms of the BSD 3-Clause License.
+| Distributed under the terms of the BSD 3-Clause Licenso.
 |
-| The full license is in the file LICENSE, distributed with this software.
+| The full license is in the file LICENSE, distributed with this softwaro.
 |----------------------------------------------------------------------------*/
 'use strict';
 
@@ -14,29 +14,39 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  IKeyBinding, KeymapManager, normalizeKeystroke, EN_US
+  IKeyBinding, KeymapManager, normalizeKeystroke, EN_US, KeycodeLayout
 } from '../../lib/index';
 
 
 /**
  * Helper function to generate keyboard events for unit-tests.
  */
-var genKeyboardEvent = function(options: any): KeyboardEvent {
-  var keyEvent = <KeyboardEvent>document.createEvent("KeyboardEvent");
-  var initMethod: any = typeof keyEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-  (<any>keyEvent)[initMethod](
-    "keydown",
-    options.bubbles || true,
-    options.cancelable || true,
-    window,
-    options.ctrlKey || false,
-    options.altKey || false,
-    options.shiftKey || false,
-    options.metaKey || false,
-    options.keyCode,
-    options.charCodeArgs || 0
-  );
-  return keyEvent;
+function genKeyboardEvent(options: any): KeyboardEvent {
+  let event = document.createEvent('Events') as KeyboardEvent;
+  let bubbles = options.bubblues || true;
+  let cancelable = options.cancelable || true;
+  event.initEvent(options.type || 'keydown', bubbles, cancelable);
+  event.keyCode = options.keyCode || 0;
+  event.which = event.keyCode;
+  event.ctrlKey = options.ctrlKey || false;
+  event.altKey = options.altKey || false;
+  event.shiftKey = options.shiftKey || false;
+  event.metaKey = options.metaKey || false;
+  event.view = options.view || window;
+  return event;
+}
+
+let id = 0;
+
+
+/**
+ * Create an element with a unique id and add to the document.
+ */
+function createElement(): HTMLElement {
+  let el = document.createElement('div');
+  (el as any).id = `test${id++}`;
+  document.body.appendChild(el);
+  return el;
 }
 
 
@@ -44,430 +54,429 @@ describe('phosphor-keymap', () => {
 
   describe('KeymapManager', () => {
 
+    describe('#constructor()', () => {
+
+      it('should accept a keyboard layout argument', () => {
+        let keymap = new KeymapManager(EN_US);
+        expect(keymap instanceof KeymapManager).to.be(true);
+      });
+
+      it('should accept no arguments', () => {
+        let keymap = new KeymapManager();
+        expect(keymap instanceof KeymapManager).to.be(true);
+      })
+
+    });
+
+    describe('#layout', () => {
+
+      it('should be a keycode layout', () => {
+        let keymap = new KeymapManager();
+        expect(keymap.layout instanceof KeycodeLayout).to.be(true);
+      });
+
+      it('should default to `EN_US` layout', () => {
+        let keymap = new KeymapManager();
+        expect(keymap.layout).to.be(EN_US);
+      });
+
+      it('should be read only', () => {
+        let keymap = new KeymapManager();
+        expect(() => { keymap.layout = null }).to.throwError();
+      });
+
+    });
+
     describe('#keycodes mozilla', () => {
 
       it('should register and fire on a correct keyboard event', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
 
-        var testInput = ["Ctrl ;"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
-        };
+          keymap.processKeydownEvent(event)
+        });
 
-        var disposable = keymap.add([binding]);
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl ;'],
+          handler: () => {
+            id++;
+            return true;
+          }
+        };
+        debugger;
+        let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
 
-        var keyEvent = genKeyboardEvent({ keyCode: 59, ctrlKey: true });
-        document.body.dispatchEvent(keyEvent);
+        let keyEvent = genKeyboardEvent({ keyCode: 59, ctrlKey: true });
+        node.dispatchEvent(keyEvent);
 
         expect(id).to.be(1);
 
-        var keyEventIncorrect = genKeyboardEvent({ keyCode: 45, ctrlKey: true });
-        document.body.dispatchEvent(keyEventIncorrect);
+        let keyEventIncorrect = genKeyboardEvent({ keyCode: 45, ctrlKey: true });
+        node.dispatchEvent(keyEventIncorrect);
 
         expect(id).to.be(1);
 
         disposable.dispose();
 
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(1);
 
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
       });
 
       it('should not fire with different modifiers', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Ctrl S"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl S'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 83, ctrlKey: true });
-        document.body.dispatchEvent(keyEvent);
+        let keyEvent = genKeyboardEvent({ keyCode: 83, ctrlKey: true });
+        node.dispatchEvent(keyEvent);
 
         expect(id).to.be(0);
 
-        var disposable = keymap.add([binding]);
+        let disposable = keymap.add([binding]);
 
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(1);
 
-        var keyEventAlt = genKeyboardEvent({ keyCode: 83, altKey: true });
-        document.body.dispatchEvent(keyEventAlt);
+        let keyEventAlt = genKeyboardEvent({ keyCode: 83, altKey: true });
+        node.dispatchEvent(keyEventAlt);
         expect(id).to.be(1);
 
-        var keyEventShift = genKeyboardEvent({ keyCode: 83, shiftKey: true });
-        document.body.dispatchEvent(keyEventShift);
+        let keyEventShift = genKeyboardEvent({ keyCode: 83, shiftKey: true });
+        node.dispatchEvent(keyEventShift);
         expect(id).to.be(1);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
       });  
 
       it('should fire with multiple events in a binding', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Ctrl K", "Ctrl L"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl K', 'Ctrl L'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEventK = genKeyboardEvent({ keyCode: 75, ctrlKey: true });
-        var keyEventL = genKeyboardEvent({ keyCode: 76, ctrlKey: true });
+        let keyEventK = genKeyboardEvent({ keyCode: 75, ctrlKey: true });
+        let keyEventL = genKeyboardEvent({ keyCode: 76, ctrlKey: true });
 
-        var disposable = keymap.add([binding]);
+        let disposable = keymap.add([binding]);
 
-        document.body.dispatchEvent(keyEventK);
+        node.dispatchEvent(keyEventK);
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEventL);
+        node.dispatchEvent(keyEventL);
         expect(id).to.be(1);
 
-        document.body.dispatchEvent(keyEventL);
+        node.dispatchEvent(keyEventL);
         expect(id).to.be(1);
-        document.body.dispatchEvent(keyEventK);
+        node.dispatchEvent(keyEventK);
         expect(id).to.be(1);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
       });
 
       it('should not stop propagation if handler returns false', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Ctrl Y"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return false;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl Y'],
+          handler: () => {
+            id++;
+            return false;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 89, ctrlKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 89, ctrlKey: true });
+        let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be.greaterThan(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should not execute handler without matching selector', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Shift P"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
+        let id = 0;
+        let binding = {
           selector: '.myScope',
-          sequence: testInput,
-          handler: handler
+          sequence: ['Shift P'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 80, shiftKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 80, shiftKey: true });
+        let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should not execute handler on modifier keycode', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Ctrl P"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl P'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 17 });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 17 });
+        let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should not register invalid sequence', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Ctrl Ctrl"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl Ctrl'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 85, ctrlKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 85, ctrlKey: true });
+        let disposable = keymap.add([binding]);
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should not register invalid selector', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Alt Z"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
+        let id = 0;
+        let binding = {
           selector: '123',
-          sequence: testInput,
-          handler: handler
+          sequence: ['Alt Z'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 90, altKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 90, altKey: true });
+        let disposable = keymap.add([binding]);
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should register partial and exact matches', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var firstInput = ["Ctrl S"];
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var firstBinding = {
-          selector: '*',
-          sequence: firstInput,
-          handler: handler
+        let id = 0;
+        let firstBinding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl S'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var secondInput = ["Ctrl S", "Ctrl D"];
-        var secondId = 0;
-        var secondHandler = (): boolean => {
-          secondId++;
-          return true;
+        let secondId = 0;
+        let secondBinding = {
+          selector: `#${node.id}`,
+          sequence: ['Ctrl S', 'Ctrl D'],
+          handler: () => {
+            secondId++;
+            return true;
+          }
         };
 
-        var secondBinding = {
-          selector: '*',
-          sequence: secondInput,
-          handler: secondHandler
-        };
-
-        var firstEvent = genKeyboardEvent({ keyCode: 83, ctrlKey: true });
-        var secondEvent = genKeyboardEvent({ keyCode: 68, ctrlKey: true });
-        var disposable = keymap.add([firstBinding, secondBinding]);
+        let firstEvent = genKeyboardEvent({ keyCode: 83, ctrlKey: true });
+        let secondEvent = genKeyboardEvent({ keyCode: 68, ctrlKey: true });
+        let disposable = keymap.add([firstBinding, secondBinding]);
 
         expect(id).to.be(0);
         expect(secondId).to.be(0);
-        document.body.dispatchEvent(firstEvent);
+        node.dispatchEvent(firstEvent);
         expect(id).to.be(0);
         expect(secondId).to.be(0);
-        document.body.dispatchEvent(secondEvent);
+        node.dispatchEvent(secondEvent);
         expect(id).to.be(0);
         expect(secondId).to.be(1);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should do nothing with null handlers', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Shift A"];
-        var id = 0;
-        var handler: any = null;
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
+        let id = 0;
+        let handler: any = null;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Shift A'],
           handler: handler
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 65, altKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 65, altKey: true });
+        let disposable = keymap.add([binding]);
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(0);
 
         disposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
       });
 
       it('should recognise permutations of modifiers', () => {
-        var keymap = new KeymapManager();
-        var listener = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
-        };
-        document.addEventListener('keydown', listener);
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
 
-        var testInput = ["Shift Alt Ctrl T"]
-        var id = 0;
-        var handler = (): boolean => {
-          id++;
-          return true;
-        };
-
-        var binding = {
-          selector: '*',
-          sequence: testInput,
-          handler: handler
+        let id = 0;
+        let binding = {
+          selector: `#${node.id}`,
+          sequence: ['Shift Alt Ctrl T'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var keyEvent = genKeyboardEvent({ keyCode: 84, ctrlKey: true, altKey: true, shiftKey: true });
-        var disposable = keymap.add([binding]);
+        let keyEvent = genKeyboardEvent({ keyCode: 84, ctrlKey: true, altKey: true, shiftKey: true });
+        let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
-        document.body.dispatchEvent(keyEvent);
+        node.dispatchEvent(keyEvent);
         expect(id).to.be(1);
 
-        var secondInput = ["alt cmd shift ctrl Q"];
-        var secondId = 0;
-        var secondHandler = (): boolean => {
-          id++;
-          return true;
+        let secondId = 0;
+        let secondBinding = {
+          selector: `#${node.id}`,
+          sequence: ['alt cmd shift ctrl Q'],
+          handler: () => {
+            id++;
+            return true;
+          }
         };
 
-        var secondBinding = {
-          selector: '*',
-          sequence: secondInput,
-          handler: secondHandler
-        };
-
-        var secondKeyEvent = genKeyboardEvent({ keyCode: 81, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true });
-        var secondDisposable = keymap.add([secondBinding]);
+        let secondKeyEvent = genKeyboardEvent({ keyCode: 81, ctrlKey: true, altKey: true, shiftKey: true, metaKey: true });
+        let secondDisposable = keymap.add([secondBinding]);
 
         expect(secondId).to.be(0);
-        document.body.dispatchEvent(secondKeyEvent);
+        node.dispatchEvent(secondKeyEvent);
         expect(secondId).to.be(0);
 
         disposable.dispose();
         secondDisposable.dispose();
-        document.removeEventListener('keydown', listener);
+        document.body.removeChild(node);
 
       });
 
       it('should play back an impartial match that was not completed', () => {
         let keymap = new KeymapManager();
         let codes: number[] = [];
-        let listener0 = (event: KeyboardEvent) => {
-          keymap.processKeydownEvent(event);
+        let node = createElement();
+
+        let listener = (event: KeyboardEvent) => {
+          codes.push(event.keyCode);
         }
-        document.addEventListener('keydown', listener0, true);
+        document.body.addEventListener('keydown', listener);
 
         let called = false;
         keymap.add([{
-          selector: '*',
+          selector: `#${node.id}`,
           sequence: ['D', 'D'],
           handler: () => {
             called = true;
@@ -475,34 +484,37 @@ describe('phosphor-keymap', () => {
           }
         }]);
 
-        let listener1 = (event: KeyboardEvent) => {
-          codes.push(event.keyCode);
-        }
-        document.addEventListener('keydown', listener1);
+        node.addEventListener('keydown', (event: KeyboardEvent) => {
+          keymap.processKeydownEvent(event);
+        });
+
         let first = genKeyboardEvent({ keyCode: 68 });
-        document.body.dispatchEvent(first);
-         expect(codes).to.eql([]);
+        node.dispatchEvent(first);
+        expect(codes).to.eql([]);
         let second = genKeyboardEvent({ keyCode: 69 });
-        document.body.dispatchEvent(second);
+        node.dispatchEvent(second);
         expect(called).to.be(false);
         expect(codes).to.eql([68, 69]);
-        document.removeEventListener('keydown', listener0);
-        document.removeEventListener('keydown', listener1);
+        document.body.removeChild(node);
+        document.body.removeEventListener('keydown', listener);
       });
 
       it('should play back an impartial match that times out', (done) => {
         let keymap = new KeymapManager();
         let codes: number[] = [];
-        let node = document.createElement('div');
-        document.body.appendChild(node);
+        let node = createElement();
+        let listener = (event: KeyboardEvent) => {
+          codes.push(event.keyCode);
+        }
+        document.body.addEventListener('keydown', listener);
 
         node.addEventListener('keydown', (event: KeyboardEvent) => {
-           keymap.processKeydownEvent(event);
-        }, true);
+          keymap.processKeydownEvent(event);
+        });
 
         let called = false;
         keymap.add([{
-          selector: '*',
+          selector: `#${node.id}`,
           sequence: ['D', 'D'],
           handler: () => {
             called = true;
@@ -510,15 +522,52 @@ describe('phosphor-keymap', () => {
           }
         }]);
 
-        node.addEventListener('keydown', (event: KeyboardEvent) => {
-          codes.push(event.keyCode);
-        });
         let evt = genKeyboardEvent({ keyCode: 68 });
         node.dispatchEvent(evt);
         expect(codes).to.eql([]);
+
         setTimeout(() => {
           expect(codes).to.eql([68]);
           expect(called).to.be(false);
+          document.body.removeChild(node);
+          document.body.removeEventListener('keydown', listener);
+          done();
+        }, 1001);
+      });
+
+      it('should resolve an exact match for a partial match time out', (done) => {
+        let keymap = new KeymapManager();
+        let node = createElement();
+        node.addEventListener('keydown', (event) => {
+          keymap.processKeydownEvent(event)
+        });
+
+        let called0 = false;
+        let called1 = false;
+        keymap.add([{
+          selector: `#${node.id}`,
+          sequence: ['D', 'D'],
+          handler: () => {
+            called0 = true;
+            return true;
+          }
+        }, {
+          selector: `#${node.id}`,
+          sequence: ['D'],
+          handler: () => {
+            called1 = true;
+            return true;
+          }
+        }]);
+
+        let evt = genKeyboardEvent({ keyCode: 68 });
+        node.dispatchEvent(evt);
+        expect(called0).to.be(false);
+        expect(called1).to.be(false);
+
+        setTimeout(() => {
+          expect(called0).to.be(false);
+          expect(called1).to.be(true);
           document.body.removeChild(node);
           done();
         }, 1001);
@@ -528,22 +577,18 @@ describe('phosphor-keymap', () => {
 
   });
 
-  describe('#keystrokes', () => {
+  describe('normalizeKeystroke()', () => {
 
-    describe('normalizeKeystrokes', () => {
-
-      it('should not register invalid keystrokes', () => {
-        expect(() => normalizeKeystroke('ctrls q', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('shiftxtrl ^', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('altcmd d', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('ctrl alt ctrl E', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('alt ctrl shift alt shift Q', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('shift ctrl shift x', EN_US)).to.throwError();
-        expect(() => normalizeKeystroke('cmd shift alt cmd X', EN_US)).to.throwError();
-        expect(normalizeKeystroke('I', EN_US)).to.be('I');
-        expect(() => normalizeKeystroke('j', EN_US)).to.throwError();
-      });
-
+    it('should not register invalid keystrokes', () => {
+      expect(() => normalizeKeystroke('ctrls q', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('shiftxtrl ^', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('altcmd d', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('ctrl alt ctrl E', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('alt ctrl shift alt shift Q', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('shift ctrl shift x', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('cmd shift alt cmd X', EN_US)).to.throwError();
+      expect(normalizeKeystroke('I', EN_US)).to.be('I');
+      expect(() => normalizeKeystroke('j', EN_US)).to.throwError();
     });
 
   });
