@@ -228,6 +228,9 @@ class KeymapManager {
 
   /**
    * Clear the pending state for the keymap.
+   *
+   * #### Notes
+   * Also plays back any keystrokes that were suppressed.
    */
   private _clearPendingState(): void {
     this._clearTimer();
