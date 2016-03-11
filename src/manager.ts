@@ -233,6 +233,11 @@ class KeymapManager {
     this._clearTimer();
     this._exactData = null;
     this._sequence.length = 0;
+    this._loopback = true;
+    for (let i = 0; i < this._targets.length; i++) {
+      this._targets[i].dispatchEvent(this._events[i]);
+    }
+    this._loopback = false;
     this._events = [];
     this._targets = [];
   }
@@ -471,7 +476,13 @@ function cloneKeyboardEvent(event: KeyboardEvent) {
   if (evt.altKey) modifiers.push('Alt');
   let modifier = modifiers.join(' ');
   let e = event;
-  evt.initKeyboardEvent(e.type, e.cancelBubble, e.cancelable, e.view, e.key,
+  if (evt.initKeyboardEvent !== void 0) {
+    evt.initKeyboardEvent(e.type, e.cancelBubble, e.cancelable, e.view, e.key,
                         e.location, modifier, e.repeat, e.locale);
+  } else {
+    (evt as any).initKeyEvent(e.type, e.bubbles, e.cancelable, e.view,
+                              e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+                              e.keyCode, e.charCode)
+  }
   return evt;
 }
