@@ -195,7 +195,6 @@ class KeymapManager {
     // (Re)start the timer to trigger the most recent exact match in
     // the event the pending partial match fails to result in a final
     // unambiguous exact match.
-    //
     event.preventDefault();
     event.stopPropagation();
     this._startTimer();
