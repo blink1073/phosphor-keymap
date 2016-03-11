@@ -27,6 +27,7 @@ function genKeyboardEvent(options: any): KeyboardEvent {
   let cancelable = options.cancelable || true;
   event.initEvent(options.type || 'keydown', bubbles, cancelable);
   event.keyCode = options.keyCode || 0;
+  event.key = options.key || '';
   event.which = event.keyCode;
   event.ctrlKey = options.ctrlKey || false;
   event.altKey = options.altKey || false;
@@ -464,7 +465,7 @@ describe('phosphor-keymap', () => {
 
       });
 
-      it('should play back an impartial match that was not completed', () => {
+      it('should play back a partial match that was not completed', () => {
         let keymap = new KeymapManager();
         let codes: number[] = [];
         let node = createElement();
@@ -499,7 +500,7 @@ describe('phosphor-keymap', () => {
         document.body.removeEventListener('keydown', listener);
       });
 
-      it('should play back an impartial match that times out', (done) => {
+      it('should play back a partial match that times out', (done) => {
         let keymap = new KeymapManager();
         let codes: number[] = [];
         let node = createElement();

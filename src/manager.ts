@@ -463,21 +463,17 @@ function matchesSelector(elem: Element, selector: string): boolean {
  * Clone a keyboard event.
  */
 function cloneKeyboardEvent(event: KeyboardEvent) {
-  let evt = document.createEvent('KeyboardEvent');
-  let e = event;
-  if (evt.initKeyboardEvent !== void 0) {
-    let modifiers: string[] = [];
-    if (evt.ctrlKey) modifiers.push('Control');
-    if (evt.shiftKey) modifiers.push('Shift');
-    if (evt.metaKey) modifiers.push('Meta');
-    if (evt.altKey) modifiers.push('Alt');
-    let modifier = modifiers.join(' ');
-    evt.initKeyboardEvent(e.type, e.bubbles, e.cancelable, e.view, e.key,
-                        e.location, modifier, e.repeat, e.locale);
-  } else {
-    (evt as any).initKeyEvent(e.type, e.bubbles, e.cancelable, e.view,
-                              e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
-                              e.keyCode, e.charCode)
-  }
-  return evt;
+  let newEvent = document.createEvent('Events') as KeyboardEvent;
+  let bubbles = event.bubbles || true;
+  let cancelable = event.cancelable || true;
+  newEvent.initEvent(event.type || 'keydown', bubbles, cancelable);
+  newEvent.key = event.key || '';
+  newEvent.keyCode = event.keyCode || 0;
+  newEvent.which = event.keyCode;
+  newEvent.ctrlKey = event.ctrlKey || false;
+  newEvent.altKey = event.altKey || false;
+  newEvent.shiftKey = event.shiftKey || false;
+  newEvent.metaKey = event.metaKey || false;
+  newEvent.view = event.view || window;
+  return newEvent;
 }
