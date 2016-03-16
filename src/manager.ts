@@ -165,6 +165,12 @@ class KeymapManager {
       return;
     }
 
+    // If there are partial matches, make sure the selector matches,
+    // otherwise captured `keydown` events would be prevented from propagating.
+    if (matches.partial.length > 0) {
+      matches.partial = findMatchingBindings(event, matches.partial);
+    }
+
     // If there are exact matches but no partial matches, the exact
     // matches can be dispatched immediately. The pending state is
     // cleared so the next key press starts from default.
@@ -402,6 +408,28 @@ function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
     }
     target = target.parentElement;
   }
+}
+
+
+/**
+ * Find the bindings that match a given event based on selector.
+ */
+function findMatchingBindings(event: KeyboardEvent, bindings: IExBinding[]): IExBinding[] {
+  let newBindings: IExBinding[] = [];
+  for (let i = 0; i < bindings.length; i++) {
+    let target = event.target as Element;
+    while (target) {
+      if (matchesSelector(target, bindings[i].selector)) {
+        newBindings.push(bindings[i]);
+        break;
+      }
+      if (target === event.currentTarget) {
+        break;
+      }
+      target = target.parentElement;
+    }
+  }
+  return newBindings;
 }
 
 
