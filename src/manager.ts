@@ -145,6 +145,11 @@ class KeymapManager {
    * processes `'keydown'` events.
    */
   processKeydownEvent(event: KeyboardEvent): void {
+    // Bail if playing back keystrokes.
+    if (this._loopback) {
+      return;
+    }
+
     // Get the canonical keystroke for the event. An empty string
     // indicates a keystroke which cannot be a valid key shortcut.
     let keystroke = keystrokeForKeydownEvent(event, this._layout);
@@ -161,6 +166,9 @@ class KeymapManager {
     // If there are no exact matches and no partial matches, clear
     // all pending state so the next key press starts from default.
     if (matches.exact.length === 0 && matches.partial.length === 0) {
+      if (this._events.length > 0) {
+        this._replayEvents();
+      }
       this._clearPendingState();
       return;
     }
@@ -174,6 +182,9 @@ class KeymapManager {
       return;
     }
 
+    // Store the event target and a cloned event for playback.
+    this._events.push(event);
+
     // If there are both exact matches and partial matches, the exact
     // matches are stored so that they can be dispatched if the timer
     // expires before a more specific match is found.
@@ -184,8 +195,6 @@ class KeymapManager {
     // (Re)start the timer to trigger the most recent exact match in
     // the event the pending partial match fails to result in a final
     // unambiguous exact match.
-    //
-    // TODO - we may want to replay events if an exact match fails.
     event.preventDefault();
     event.stopPropagation();
     this._startTimer();
@@ -219,12 +228,32 @@ class KeymapManager {
   }
 
   /**
+   * Replay events that were suppressed.
+   */
+  private _replayEvents(): void {
+    let events = this._events;
+    if (events.length > 0) {
+      this._loopback = true;
+      for (let i = 0; i < events.length; i++) {
+        let event = cloneKeyboardEvent(events[i]);
+        events[i].target.dispatchEvent(event);
+      }
+      this._loopback = false;
+    }
+    this._events = [];
+  }
+
+  /**
    * Clear the pending state for the keymap.
+   *
+   * #### Notes
+   * Also plays back any keystrokes that were suppressed.
    */
   private _clearPendingState(): void {
     this._clearTimer();
     this._exactData = null;
     this._sequence.length = 0;
+    this._events = [];
   }
 
   /**
@@ -233,14 +262,19 @@ class KeymapManager {
   private _onPendingTimeout(): void {
     let data = this._exactData;
     this._timer = 0;
-    this._exactData = null;
-    this._sequence.length = 0;
-    if (data) dispatchBindings(data.exact, data.event);
+    if (data) {
+      dispatchBindings(data.exact, data.event);
+    } else {
+      this._replayEvents();
+    }
+    this._clearPendingState();
   }
 
   private _timer = 0;
   private _layout: IKeyboardLayout;
   private _sequence: string[] = [];
+  private _events: KeyboardEvent[] = [];
+  private _loopback = false;
   private _bindings: IExBinding[] = [];
   private _exactData: IExactData = null;
 }
@@ -433,4 +467,28 @@ const protoMatchFunc: Function = (() => {
  */
 function matchesSelector(elem: Element, selector: string): boolean {
   return protoMatchFunc.call(elem, selector);
+}
+
+
+/**
+ * Clone a keyboard event.
+ *
+ * #### Notes
+ * We have to use a custom event because Chrome nulls out the `keyCode`
+ * field in `KeyboardEvent`s.
+ */
+function cloneKeyboardEvent(event: KeyboardEvent) {
+  let newEvent = document.createEvent('Events') as KeyboardEvent;
+  let bubbles = event.bubbles || true;
+  let cancelable = event.cancelable || true;
+  newEvent.initEvent(event.type || 'keydown', bubbles, cancelable);
+  newEvent.key = event.key || '';
+  newEvent.keyCode = event.keyCode || 0;
+  newEvent.which = event.keyCode;
+  newEvent.ctrlKey = event.ctrlKey || false;
+  newEvent.altKey = event.altKey || false;
+  newEvent.shiftKey = event.shiftKey || false;
+  newEvent.metaKey = event.metaKey || false;
+  newEvent.view = event.view || window;
+  return newEvent;
 }
