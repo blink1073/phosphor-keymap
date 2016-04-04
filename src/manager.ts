@@ -125,11 +125,9 @@ class KeymapManager {
     let exbArray: IExBinding[] = [];
     for (let kb of bindings) {
       let exb = createExBinding(kb, this._layout);
-      if (exb !== null) {
-        exbArray.push(exb);
-        this._bindings.push(exb);
-      }
+      if (exb !== null) exbArray.push(exb);
     }
+    Array.prototype.push.apply(this._bindings, exbArray);
     return new DisposableDelegate(() => this._removeBindings(exbArray));
   }
 
