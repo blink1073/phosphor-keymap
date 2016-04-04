@@ -14,7 +14,8 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  IKeyBinding, KeymapManager, normalizeKeystroke, EN_US, KeycodeLayout
+  IKeyBinding, KeymapManager, normalizeKeystroke, EN_US, KeycodeLayout,
+  keystrokeForKeydownEvent
 } from '../../lib/index';
 
 
@@ -23,7 +24,7 @@ import {
  */
 function genKeyboardEvent(options: any): KeyboardEvent {
   let event = document.createEvent('Events') as KeyboardEvent;
-  let bubbles = options.bubblues || true;
+  let bubbles = options.bubbles || true;
   let cancelable = options.cancelable || true;
   event.initEvent(options.type || 'keydown', bubbles, cancelable);
   event.keyCode = options.keyCode || 0;
@@ -38,6 +39,12 @@ function genKeyboardEvent(options: any): KeyboardEvent {
 }
 
 let id = 0;
+
+
+/**
+ * A flag indicating whether the platform is Mac.
+ */
+var IS_MAC = !!navigator.platform.match(/Mac/i);
 
 
 /**
@@ -570,18 +577,154 @@ describe('phosphor-keymap', () => {
 
   });
 
+  describe('keystrokeForKeydownEvent()', () => {
+
+    it('should create a normalized keystroke', () => {
+      let evt = genKeyboardEvent({ ctrlKey: true, keyCode: 83 });
+      let keystroke = keystrokeForKeydownEvent(evt, EN_US);
+      expect(keystroke).to.be('Ctrl S');
+    });
+
+    it('should handle multiple modifiers', () => {
+      let evt = genKeyboardEvent({
+        ctrlKey: true, altKey: true, shiftKey: true, keyCode: 83
+      });
+      let keystroke = keystrokeForKeydownEvent(evt, EN_US);
+      expect(keystroke).to.be('Ctrl Alt Shift S');
+    });
+
+    it('should fail on an invalid shortcut', () => {
+      let evt = genKeyboardEvent({ keyCode: -1 });
+      let keystroke = keystrokeForKeydownEvent(evt, EN_US);
+      expect(keystroke).to.be('');
+    });
+
+  });
+
   describe('normalizeKeystroke()', () => {
 
-    it('should throw on invalid keystrokes', () => {
-      expect(() => normalizeKeystroke('ctrls q', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('shiftxtrl ^', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('altcmd d', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('ctrl alt ctrl E', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('alt ctrl shift alt shift Q', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('shift ctrl shift x', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('cmd shift alt cmd X', EN_US)).to.throwError();
-      expect(() => normalizeKeystroke('j', EN_US)).to.throwError();
-      expect(normalizeKeystroke('I', EN_US)).to.be('I');
+    it('should normalize and validate a keystroke', () => {
+      let stroke = normalizeKeystroke('Ctrl S', EN_US);
+      expect(stroke).to.be('Ctrl S');
+    });
+
+    it('should handle multiple modifiers', () => {
+      let stroke = normalizeKeystroke('Ctrl Shift Alt S', EN_US);
+      expect(stroke).to.be('Ctrl Alt Shift S');
+    });
+
+    it('should handle platform specific modifiers', () => {
+      let stroke = '';
+      if (IS_MAC) {
+        stroke = normalizeKeystroke('Cmd S', EN_US);
+        expect(stroke).to.be('Cmd S');
+        stroke = normalizeKeystroke('Accel S', EN_US);
+        expect(stroke).to.be('Cmd S');
+      } else {
+        expect(() => normalizeKeystroke('Cmd S', EN_US)).to.throwError();
+        stroke = normalizeKeystroke('Accel S', EN_US);
+        expect(stroke).to.be('Ctrl S');
+      }
+    });
+
+    it('should fail when modifiers or primary keys are duplicated', () => {
+      expect(() => normalizeKeystroke('Ctrl Ctrl S', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('Alt Alt S', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('Cmd Cmd S', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('Shift Shift S', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('S S', EN_US)).to.throwError();
+    });
+
+    it('should fail if a modifier follows a primary key', () => {
+      expect(() => normalizeKeystroke('S Ctrl', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('S Alt', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('S Cmd', EN_US)).to.throwError();
+      expect(() => normalizeKeystroke('S Shift', EN_US)).to.throwError();
+    });
+
+    it('should fail if the primary key is not specified', () => {
+      expect(() => normalizeKeystroke('Shift', EN_US)).to.throwError();
+    });
+
+  });
+
+  describe('KeyCodeLayout', () => {
+
+    describe('#constructor()', () => {
+
+      it('should construct a new keycode layout', () => {
+        let layout = new KeycodeLayout('foo', {});
+        expect(layout instanceof KeycodeLayout).to.be(true);
+      });
+
+    });
+
+    describe('#name', () => {
+
+      it('should be a human readable name of the layout', () => {
+        let layout = new KeycodeLayout('foo', {});
+        expect(layout.name).to.be('foo');
+      });
+
+      it('should be read-only', () => {
+        let layout = new KeycodeLayout('foo', {});
+        expect(() => { layout.name = 'bar'; }).to.throwError();
+      });
+
+    });
+
+    describe('#keycaps()', () => {
+
+      it('should get an array of all keycap values supported by the layout', () => {
+        let layout = new KeycodeLayout('foo', { 100: 'F' });
+        let keycaps = layout.keycaps();
+        expect(keycaps.length).to.be(1);
+        expect(keycaps[0]).to.be('F');
+      });
+
+    });
+
+    describe('#isValidKeycap()', () => {
+
+      it('should test whether the keycap is valid for the layout', () => {
+        let layout = new KeycodeLayout('foo', { 100: 'F' });
+        expect(layout.isValidKeycap('F')).to.be(true);
+        expect(layout.isValidKeycap('A')).to.be(false);
+      });
+
+    });
+
+    describe('#keycapForKeydownEvent()', () => {
+
+      it('should get the keycap for a `keydown` event', () => {
+        let layout = new KeycodeLayout('foo', { 100: 'F' });
+        let evt = genKeyboardEvent({ keyCode: 100 });
+        let cap = layout.keycapForKeydownEvent(evt);
+        expect(cap).to.be('F');
+      });
+
+      it('should return an empty string if the code is not valid', () => {
+        let layout = new KeycodeLayout('foo', { 100: 'F' });
+        let evt = genKeyboardEvent({ keyCode: 101 });
+        let cap = layout.keycapForKeydownEvent(evt);
+        expect(cap).to.be('');
+      });
+
+    });
+
+  });
+
+  describe('EN_US', () => {
+
+    it('should be a keycode layout', () => {
+      expect(EN_US instanceof KeycodeLayout).to.be(true);
+    });
+
+    it('should have some standard keycaps', () => {
+      expect(EN_US.isValidKeycap('A')).to.be(true);
+      expect(EN_US.isValidKeycap('Z')).to.be(true);
+      expect(EN_US.isValidKeycap('0')).to.be(true);
+      expect(EN_US.isValidKeycap('a')).to.be(false);
     });
 
   });
