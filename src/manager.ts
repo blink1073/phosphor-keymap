@@ -173,8 +173,9 @@ class KeymapManager {
       return;
     }
 
-    // If there are partial matches, make sure the selector matches,
-    // otherwise captured `keydown` events would be prevented from propagating.
+    // If there are partial matches, make sure the selector actually
+    // matches, otherwise captured `keydown` events would be prevented
+    // from propagating.
     if (matches.partial.length > 0) {
       matches.partial = findMatchingBindings(event, matches.partial);
     }
