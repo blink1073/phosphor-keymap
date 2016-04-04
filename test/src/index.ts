@@ -88,13 +88,12 @@ describe('phosphor-keymap', () => {
 
     });
 
-    describe('#keycodes mozilla', () => {
+    describe('#processKeydownEvent()', () => {
 
-      it('should register and fire on a correct keyboard event', () => {
+      it('should dispatch on a correct keyboard event', () => {
         let keymap = new KeymapManager();
         let node = createElement();
         node.addEventListener('keydown', (event) => {
-
           keymap.processKeydownEvent(event)
         });
 
@@ -107,7 +106,7 @@ describe('phosphor-keymap', () => {
             return true;
           }
         };
-        debugger;
+
         let disposable = keymap.add([binding]);
 
         expect(id).to.be(0);
@@ -130,7 +129,7 @@ describe('phosphor-keymap', () => {
         document.body.removeChild(node);
       });
 
-      it('should not fire with different modifiers', () => {
+      it('should not dispatch with different modifiers', () => {
         let keymap = new KeymapManager();
         let node = createElement();
         node.addEventListener('keydown', (event) => {
@@ -167,9 +166,9 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-      });  
+      });
 
-      it('should fire with multiple events in a binding', () => {
+      it('should dispatch with multiple events in a binding', () => {
         let keymap = new KeymapManager();
         let node = createElement();
         node.addEventListener('keydown', (event) => {
@@ -231,7 +230,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should not execute handler without matching selector', () => {
@@ -260,7 +258,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should not execute handler on modifier keycode', () => {
@@ -289,7 +286,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should not register invalid sequence', () => {
@@ -317,7 +313,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should not register invalid selector', () => {
@@ -345,7 +340,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should register partial and exact matches', () => {
@@ -390,7 +384,6 @@ describe('phosphor-keymap', () => {
 
         disposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should do nothing with null handlers', () => {
@@ -462,7 +455,6 @@ describe('phosphor-keymap', () => {
         disposable.dispose();
         secondDisposable.dispose();
         document.body.removeChild(node);
-
       });
 
       it('should play back a partial match that was not completed', () => {
@@ -580,7 +572,7 @@ describe('phosphor-keymap', () => {
 
   describe('normalizeKeystroke()', () => {
 
-    it('should not register invalid keystrokes', () => {
+    it('should throw on invalid keystrokes', () => {
       expect(() => normalizeKeystroke('ctrls q', EN_US)).to.throwError();
       expect(() => normalizeKeystroke('shiftxtrl ^', EN_US)).to.throwError();
       expect(() => normalizeKeystroke('altcmd d', EN_US)).to.throwError();
@@ -588,8 +580,8 @@ describe('phosphor-keymap', () => {
       expect(() => normalizeKeystroke('alt ctrl shift alt shift Q', EN_US)).to.throwError();
       expect(() => normalizeKeystroke('shift ctrl shift x', EN_US)).to.throwError();
       expect(() => normalizeKeystroke('cmd shift alt cmd X', EN_US)).to.throwError();
-      expect(normalizeKeystroke('I', EN_US)).to.be('I');
       expect(() => normalizeKeystroke('j', EN_US)).to.throwError();
+      expect(normalizeKeystroke('I', EN_US)).to.be('I');
     });
 
   });

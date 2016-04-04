@@ -125,9 +125,11 @@ class KeymapManager {
     let exbArray: IExBinding[] = [];
     for (let kb of bindings) {
       let exb = createExBinding(kb, this._layout);
-      if (exb) exbArray.push(exb);
+      if (exb !== null) {
+        exbArray.push(exb);
+        this._bindings.push(exb);
+      }
     }
-    this._bindings = this._bindings.concat(exbArray);
     return new DisposableDelegate(() => this._removeBindings(exbArray));
   }
 
@@ -145,8 +147,8 @@ class KeymapManager {
    * processes `'keydown'` events.
    */
   processKeydownEvent(event: KeyboardEvent): void {
-    // Bail if playing back keystrokes.
-    if (this._loopback) {
+    // Bail immediately if playing back keystrokes.
+    if (this._replaying) {
       return;
     }
 
@@ -166,9 +168,7 @@ class KeymapManager {
     // If there are no exact matches and no partial matches, clear
     // all pending state so the next key press starts from default.
     if (matches.exact.length === 0 && matches.partial.length === 0) {
-      if (this._events.length > 0) {
-        this._replayEvents();
-      }
+      this._replayEvents();
       this._clearPendingState();
       return;
     }
@@ -182,15 +182,15 @@ class KeymapManager {
       return;
     }
 
-    // Store the event target and a cloned event for playback.
-    this._events.push(event);
-
     // If there are both exact matches and partial matches, the exact
     // matches are stored so that they can be dispatched if the timer
     // expires before a more specific match is found.
     if (matches.exact.length > 0) {
       this._exactData = { exact: matches.exact, event: event };
     }
+
+    // Store the event for possible playback in the future.
+    this._events.push(event);
 
     // (Re)start the timer to trigger the most recent exact match in
     // the event the pending partial match fails to result in a final
@@ -203,8 +203,17 @@ class KeymapManager {
   /**
    * Remove an array of extended bindings from the key map.
    */
-  private _removeBindings(array: IExBinding[]): void {
-    this._bindings = this._bindings.filter(exb => array.indexOf(exb) === -1);
+  private _removeBindings(exbArray: IExBinding[]): void {
+    let count = 0;
+    for (let i = 0, n = this._bindings.length; i < n; ++i) {
+      let exb = this._bindings[i];
+      if (exbArray.indexOf(exb) !== -1) {
+        count++;
+      } else {
+        this._bindings[i - count] = exb;
+      }
+    }
+    this._bindings.length -= count;
   }
 
   /**
@@ -228,42 +237,36 @@ class KeymapManager {
   }
 
   /**
-   * Replay events that were suppressed.
+   * Replay the events which were suppressed.
    */
   private _replayEvents(): void {
-    let events = this._events;
-    if (events.length > 0) {
-      this._loopback = true;
-      for (let i = 0; i < events.length; i++) {
-        let event = cloneKeyboardEvent(events[i]);
-        events[i].target.dispatchEvent(event);
-      }
-      this._loopback = false;
+    if (this._events.length === 0) {
+      return;
     }
-    this._events = [];
+    this._replaying = true;
+    for (let evt of this._events) {
+      evt.target.dispatchEvent(cloneKeyboardEvent(evt));
+    }
+    this._replaying = false;
   }
 
   /**
    * Clear the pending state for the keymap.
-   *
-   * #### Notes
-   * Also plays back any keystrokes that were suppressed.
    */
   private _clearPendingState(): void {
     this._clearTimer();
     this._exactData = null;
+    this._events.length = 0;
     this._sequence.length = 0;
-    this._events = [];
   }
 
   /**
    * Handle the partial match timeout.
    */
   private _onPendingTimeout(): void {
-    let data = this._exactData;
     this._timer = 0;
-    if (data) {
-      dispatchBindings(data.exact, data.event);
+    if (this._exactData) {
+      dispatchBindings(this._exactData.exact, this._exactData.event);
     } else {
       this._replayEvents();
     }
@@ -271,11 +274,11 @@ class KeymapManager {
   }
 
   private _timer = 0;
+  private _replaying = false;
   private _layout: IKeyboardLayout;
   private _sequence: string[] = [];
-  private _events: KeyboardEvent[] = [];
-  private _loopback = false;
   private _bindings: IExBinding[] = [];
+  private _events: KeyboardEvent[] = [];
   private _exactData: IExactData = null;
 }
 
@@ -474,21 +477,21 @@ function matchesSelector(elem: Element, selector: string): boolean {
  * Clone a keyboard event.
  *
  * #### Notes
- * We have to use a custom event because Chrome nulls out the `keyCode`
- * field in `KeyboardEvent`s.
+ * A custom event is required because Chrome nulls out the `keyCode`
+ * field in user-generated `KeyboardEvent` types.
  */
 function cloneKeyboardEvent(event: KeyboardEvent) {
-  let newEvent = document.createEvent('Events') as KeyboardEvent;
+  let clone = document.createEvent('Event') as KeyboardEvent;
   let bubbles = event.bubbles || true;
   let cancelable = event.cancelable || true;
-  newEvent.initEvent(event.type || 'keydown', bubbles, cancelable);
-  newEvent.key = event.key || '';
-  newEvent.keyCode = event.keyCode || 0;
-  newEvent.which = event.keyCode;
-  newEvent.ctrlKey = event.ctrlKey || false;
-  newEvent.altKey = event.altKey || false;
-  newEvent.shiftKey = event.shiftKey || false;
-  newEvent.metaKey = event.metaKey || false;
-  newEvent.view = event.view || window;
-  return newEvent;
+  clone.initEvent(event.type || 'keydown', bubbles, cancelable);
+  clone.key = event.key || '';
+  clone.keyCode = event.keyCode || 0;
+  clone.which = event.keyCode || 0;
+  clone.ctrlKey = event.ctrlKey || false;
+  clone.altKey = event.altKey || false;
+  clone.shiftKey = event.shiftKey || false;
+  clone.metaKey = event.metaKey || false;
+  clone.view = event.view || window;
+  return clone;
 }
