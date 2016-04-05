@@ -49,10 +49,9 @@ function makeStr(sequence: string[]): string {
 /**
  * A handler which logs the key binding sequence.
  */
-function logHandler(args: any): boolean {
+function logHandler(args: any): void {
   let span = document.getElementById('log-span');
   span.textContent = makeStr(args.sequence as string[]);
-  return true;
 }
 
 
