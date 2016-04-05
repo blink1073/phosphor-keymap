@@ -438,7 +438,7 @@ function findMatch(bindings: IExBinding[], sequence: string[], event: KeyboardEv
   }
 
   // Return the match result.
-  return { exact: exact, partial: partial };
+  return { exact, partial };
 }
 
 
