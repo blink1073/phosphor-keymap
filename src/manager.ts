@@ -68,10 +68,8 @@ interface IKeyBinding {
 
   /**
    * The handler to execute when the key binding is matched.
-   *
-   * Returns `true` if the action is handled, `false` otherwise.
    */
-  handler: (args: any) => boolean;
+  handler: (args: any) => void;
 
   /**
    * The arguments for the handler, if necessary.
@@ -125,11 +123,9 @@ class KeymapManager {
     let exbArray: IExBinding[] = [];
     for (let kb of bindings) {
       let exb = createExBinding(kb, this._layout);
-      if (exb !== null) {
-        exbArray.push(exb);
-        this._bindings.push(exb);
-      }
+      if (exb !== null) exbArray.push(exb);
     }
+    Array.prototype.push.apply(this._bindings, exbArray);
     return new DisposableDelegate(() => this._removeBindings(exbArray));
   }
 
@@ -163,47 +159,41 @@ class KeymapManager {
     this._sequence.push(keystroke);
 
     // Find the exact and partial matches for the key sequence.
-    let matches = findSequenceMatches(this._bindings, this._sequence);
+    let { exact, partial } = findMatch(this._bindings, this._sequence, event);
 
-    // If there are no exact matches and no partial matches, clear
-    // all pending state so the next key press starts from default.
-    if (matches.exact.length === 0 && matches.partial.length === 0) {
+    // If there is no exact or partial match, replay any suppressed
+    // events and clear the pending state so that the next key press
+    // starts from a fresh default state.
+    if (!exact && !partial) {
       this._replayEvents();
       this._clearPendingState();
       return;
     }
 
-    // If there are partial matches, make sure the selector actually
-    // matches, otherwise captured `keydown` events would be prevented
-    // from propagating.
-    if (matches.partial.length > 0) {
-      matches.partial = findMatchingBindings(event, matches.partial);
-    }
+    // Stop propagation of the event. If there is only a partial match,
+    // the event will be replayed if a final match is never triggered.
+    event.preventDefault();
+    event.stopPropagation();
 
-    // If there are exact matches but no partial matches, the exact
-    // matches can be dispatched immediately. The pending state is
-    // cleared so the next key press starts from default.
-    if (matches.partial.length === 0) {
+    // If there is an exact match but no partial, the exact match can
+    // be dispatched immediately. The pending state is cleared so the
+    // next key press starts from a fresh default state.
+    if (!partial) {
+      safeInvoke(exact);
       this._clearPendingState();
-      dispatchBindings(matches.exact, event);
       return;
     }
 
-    // If there are both exact matches and partial matches, the exact
-    // matches are stored so that they can be dispatched if the timer
-    // expires before a more specific match is found.
-    if (matches.exact.length > 0) {
-      this._exactData = { exact: matches.exact, event: event };
-    }
+    // If there is both an exact match and a partial, the exact match
+    // is stored for future dispatch in case the timer expires before
+    // a more specific match is triggered.
+    if (exact) this._exact = exact;
 
     // Store the event for possible playback in the future.
     this._events.push(event);
 
-    // (Re)start the timer to trigger the most recent exact match in
-    // the event the pending partial match fails to result in a final
-    // unambiguous exact match.
-    event.preventDefault();
-    event.stopPropagation();
+    // (Re)start the timer to dispatch the most recent exact match
+    // in case the partial match fails to result in an exact match.
     this._startTimer();
   }
 
@@ -252,7 +242,8 @@ class KeymapManager {
     }
     this._replaying = true;
     for (let evt of this._events) {
-      evt.target.dispatchEvent(cloneKeyboardEvent(evt));
+      let clone = cloneKeyboardEvent(evt);
+      evt.target.dispatchEvent(clone);
     }
     this._replaying = false;
   }
@@ -262,7 +253,7 @@ class KeymapManager {
    */
   private _clearPendingState(): void {
     this._clearTimer();
-    this._exactData = null;
+    this._exact = null;
     this._events.length = 0;
     this._sequence.length = 0;
   }
@@ -272,8 +263,8 @@ class KeymapManager {
    */
   private _onPendingTimeout(): void {
     this._timer = 0;
-    if (this._exactData) {
-      dispatchBindings(this._exactData.exact, this._exactData.event);
+    if (this._exact) {
+      safeInvoke(this._exact);
     } else {
       this._replayEvents();
     }
@@ -284,9 +275,9 @@ class KeymapManager {
   private _replaying = false;
   private _layout: IKeyboardLayout;
   private _sequence: string[] = [];
+  private _exact: IExBinding = null;
   private _bindings: IExBinding[] = [];
   private _events: KeyboardEvent[] = [];
-  private _exactData: IExactData = null;
 }
 
 
@@ -302,34 +293,18 @@ interface IExBinding extends IKeyBinding {
 
 
 /**
- * An object which holds pending exact match data.
- */
-interface IExactData {
-  /**
-   * The exact match bindings.
-   */
-  exact: IExBinding[];
-
-  /**
-   * The keyboard event which triggered the exact match.
-   */
-  event: KeyboardEvent;
-}
-
-
-/**
- * An object which holds the results of a sequence match.
+ * An object which holds the results of a binding match.
  */
 interface IMatchResult {
   /**
-   * The bindings which exactly match the key sequence.
+   * The best binding which exactly matches the key sequence.
    */
-  exact: IExBinding[];
+  exact: IExBinding;
 
   /**
-   * The bindings which partially match the key sequence.
+   * Whether there are bindings which partially match the sequence.
    */
-  partial: IExBinding[];
+  partial: boolean;
 }
 
 
@@ -370,7 +345,7 @@ const enum SequenceMatch { None, Exact, Partial };
 
 
 /**
- * Test whether an ex-binding sequence matches a key sequence.
+ * Test whether a binding sequence matches a key sequence.
  *
  * Returns a `SequenceMatch` value indicating the type of match.
  */
@@ -391,83 +366,93 @@ function matchSequence(exbSeq: string[], keySeq: string[]): SequenceMatch {
 
 
 /**
- * Find the extended bindings which match a key sequence.
+ * Find the distance from the target node to the first matching node.
  *
- * Returns a match result which contains the exact and partial matches.
+ * This traverses the event path from `target` to `currentTarget` and
+ * computes the distance from `target` to the first node which matches
+ * the CSS selector. If no match is found, `-1` is returned.
  */
-function findSequenceMatches(bindings: IExBinding[], sequence: string[]): IMatchResult {
-  let exact: IExBinding[] = [];
-  let partial: IExBinding[] = [];
-  for (let exb of bindings) {
-    let match = matchSequence(exb.sequence, sequence);
-    if (match === SequenceMatch.Exact) {
-      exact.push(exb);
-    } else if (match === SequenceMatch.Partial) {
-      partial.push(exb);
-    }
-  }
-  return { exact: exact, partial: partial };
-}
-
-
-/**
- * Find the bindings which match the given target element.
- *
- * The matched bindings are ordered from highest to lowest specificity.
- */
-function findOrderedMatches(bindings: IExBinding[], target: Element): IExBinding[] {
-  return bindings.filter(exb => {
-    return matchesSelector(target, exb.selector);
-  }).sort((a, b) => {
-    return b.specificity - a.specificity;
-  });
-}
-
-
-/**
- * Dispatch the key bindings for the given keyboard event.
- *
- * As the dispatcher walks up the DOM, the bindings will be filtered
- * for the best matching keybinding. If a match is found, the handler
- * is invoked and event propagation is stopped.
- */
-function dispatchBindings(bindings: IExBinding[], event: KeyboardEvent): void {
+function targetDistance(selector: string, event: KeyboardEvent): number {
+  let distance = 0;
   let target = event.target as Element;
-  while (target) {
-    for (let { handler, args } of findOrderedMatches(bindings, target)) {
-      if (handler(args)) {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
+  let current = event.currentTarget as Element;
+  for (; target !== null; target = target.parentElement, ++distance) {
+    if (matchesSelector(target, selector)) {
+      return distance;
     }
-    if (target === event.currentTarget) {
-      return;
+    if (target === current) {
+      return -1;
     }
-    target = target.parentElement;
   }
+  return -1;
 }
 
 
 /**
- * Find the bindings that match a given event based on selector.
+ * Find the bindings which match a key sequence.
+ *
+ * This returns a match result which contains the best exact matching
+ * binding, and a flag which indicates if there are partial matches.
  */
-function findMatchingBindings(event: KeyboardEvent, bindings: IExBinding[]): IExBinding[] {
-  let newBindings: IExBinding[] = [];
-  for (let i = 0; i < bindings.length; i++) {
-    let target = event.target as Element;
-    while (target) {
-      if (matchesSelector(target, bindings[i].selector)) {
-        newBindings.push(bindings[i]);
-        break;
+function findMatch(bindings: IExBinding[], sequence: string[], event: KeyboardEvent): IMatchResult {
+  // Whether a partial match has been found.
+  let partial = false;
+
+  // The current best exact match.
+  let exact: IExBinding = null;
+
+  // The match distance for the exact match.
+  let distance = Infinity;
+
+  // Iterate the bindings and search for the best match.
+  for (let i = 0, n = bindings.length; i < n; ++i) {
+    // Lookup the current binding.
+    let exb = bindings[i];
+
+    // Check whether the binding sequence is a match.
+    let match = matchSequence(exb.sequence, sequence);
+
+    // If there is no match, the binding is ignored.
+    if (match === SequenceMatch.None) {
+      continue;
+    }
+
+    // If it is a partial match and no other partial match has been
+    // found, ensure the selector matches and mark the partial flag.
+    if (match === SequenceMatch.Partial) {
+      if (!partial && targetDistance(exb.selector, event) !== -1) {
+        partial = true;
       }
-      if (target === event.currentTarget) {
-        break;
+      continue;
+    }
+
+    // Otherwise, it's an exact match. Update the best match if the
+    // binding is a stronger match than the current best exact match.
+    let td = targetDistance(exb.selector, event);
+    if (td !== -1 && td <= distance) {
+      if (exact === null || exb.specificity > exact.specificity) {
+        exact = exb;
+        distance = td;
       }
-      target = target.parentElement;
     }
   }
-  return newBindings;
+
+  // Return the match result.
+  return { exact, partial };
+}
+
+
+/**
+ * Safely invoke the handler for the key binding.
+ *
+ * Exceptions in the handler will be caught and logged.
+ */
+function safeInvoke(binding: IExBinding): void {
+  try {
+    binding.handler.call(void 0, binding.args);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 
