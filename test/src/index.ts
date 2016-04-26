@@ -29,7 +29,7 @@ function genKeyboardEvent(options?: any): KeyboardEvent {
   let evt = new KeyboardEvent('keydown', options);
   // Work around bug in Chrome that zeros out the keyCode.
   Object.defineProperty(evt, 'keyCode', {
-      value: options['keyCode'], writable: true });
+      value: options['keyCode'] || 0, writable: true });
   return evt;
 }
 
