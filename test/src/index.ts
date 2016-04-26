@@ -22,20 +22,15 @@ import {
 /**
  * Helper function to generate keyboard events for unit-tests.
  */
-function genKeyboardEvent(options: any): KeyboardEvent {
-  let event = document.createEvent('Events') as KeyboardEvent;
-  let bubbles = options.bubbles || true;
-  let cancelable = options.cancelable || true;
-  event.initEvent(options.type || 'keydown', bubbles, cancelable);
-  event.keyCode = options.keyCode || 0;
-  event.key = options.key || '';
-  event.which = event.keyCode;
-  event.ctrlKey = options.ctrlKey || false;
-  event.altKey = options.altKey || false;
-  event.shiftKey = options.shiftKey || false;
-  event.metaKey = options.metaKey || false;
-  event.view = options.view || window;
-  return event;
+function genKeyboardEvent(options?: any): KeyboardEvent {
+  options = options || {};
+  options.bubbles = options.bubbles || true;
+  options.cancelable = options.cancelable || true;
+  let evt = new KeyboardEvent('keydown', options);
+  // Work around bug in Chrome that zeros out the keyCode.
+  Object.defineProperty(evt, 'keyCode', {
+      value: options['keyCode'], writable: true });
+  return evt;
 }
 
 let id = 0;

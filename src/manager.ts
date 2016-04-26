@@ -489,23 +489,11 @@ function matchesSelector(elem: Element, selector: string): boolean {
 
 /**
  * Clone a keyboard event.
- *
- * #### Notes
- * A custom event is required because Chrome nulls out the `keyCode`
- * field in user-generated `KeyboardEvent` types.
  */
-function cloneKeyboardEvent(event: KeyboardEvent) {
-  let clone = document.createEvent('Event') as KeyboardEvent;
-  let bubbles = event.bubbles || true;
-  let cancelable = event.cancelable || true;
-  clone.initEvent(event.type || 'keydown', bubbles, cancelable);
-  clone.key = event.key || '';
-  clone.keyCode = event.keyCode || 0;
-  clone.which = event.keyCode || 0;
-  clone.ctrlKey = event.ctrlKey || false;
-  clone.altKey = event.altKey || false;
-  clone.shiftKey = event.shiftKey || false;
-  clone.metaKey = event.metaKey || false;
-  clone.view = event.view || window;
+function cloneKeyboardEvent(evt: KeyboardEvent) {
+  let clone = new KeyboardEvent(evt.type, evt);
+  // Work around bug in Chrome that zeros out the keyCode.
+  Object.defineProperty(clone, 'keyCode',
+    { value: evt.keyCode, writable: true });
   return clone;
 }
